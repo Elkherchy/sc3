@@ -20,8 +20,6 @@ services:
       POSTGRES_DB: sc3
     ports:
       - "5432:5432"
-  networks:
-      - sc3_network
 
 networks:
   sc3_network:
