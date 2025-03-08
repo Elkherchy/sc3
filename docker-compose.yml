@@ -10,6 +10,8 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    networks:
+      - sc3_network  # Add this line to ensure web can access db
   db:
     image: postgres:13
     environment:
