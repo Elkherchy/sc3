@@ -36,9 +36,12 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'core',
-    'schedule',
+    'rest_framework_simplejwt',
     'rest_framework',
+    'rest_framework.authtoken',
+    "rest_framework_simplejwt.token_blacklist",
+    'users',
+    'corsheaders',
     'django.contrib.staticfiles',
 ]
 
@@ -83,10 +86,24 @@ DATABASES = {
         'NAME': 'sc3' , # Replace with your database name
         'USER': 'elkherchybaba',  # Replace with your MySQL username
         'PASSWORD': 'kh@38405659',  # Replace with your MySQL password
-        'HOST': 'db',  # If your database is on the same machine, use 'localhost'
+        'HOST': '127.0.0.1',  # If your database is on the same machine, use 'localhost'
         'PORT': '5432'  # Default MySQL port
     }
 }
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+AUTH_USER_MODEL = 'users.User'
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Assurez-vous que l'accès est sécurisé
+    ],
+}
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = ['http://localhost:3000','https://sc3-gamma.vercel.app','http://157.245.143.208:8000']
@@ -132,6 +149,12 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+
+EMAIL_HOST = 'in-v3.mailjet.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = '5a01f3e8f4fbc5894280905cf9e43aad'  # Add your Mailjet API Key
+EMAIL_HOST_PASSWORD = 'd7f68ad2a4812a1ccf54154a73674959'  #
 
 
 # Static files (CSS, JavaScript, Images)
