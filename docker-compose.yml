@@ -1,6 +1,14 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: elkherchybaba
+      POSTGRES_PASSWORD: kh@38405659
+      POSTGRES_DB: sc3
+    ports:
+      - "5432:5432"
   web:
     build: .
     command: /env/bin/python -m gunicorn --bind 0.0.0.0:8000 --workers 3 sc3.wsgi:application
@@ -10,11 +18,3 @@ services:
       - "8000:8000"
     depends_on:
       - db
-  db:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: elkherchybaba
-      POSTGRES_PASSWORD: kh@38405659
-      POSTGRES_DB: sc3
-    ports:
-      - "5432:5432"

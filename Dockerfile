@@ -28,5 +28,5 @@ COPY --from=builder /env /env
 # Copy the application code
 COPY . .
 EXPOSE 8000 
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "sc3.wsgi:application"]
+CMD ["/env/bin/python", "-m", "gunicorn", "--bind", "0.0.0.0:8000", "--workers", "3", "sc3.wsgi:application"]
 
