@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-@ct%$rsa)v$wn9wku)0nfrfm#9&4vgpkdexu(h0itor6tni-ur
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1','157.245.143.208','https://sc3-gamma.vercel.app']
 
 
 # Application definition
