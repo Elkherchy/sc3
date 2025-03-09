@@ -20,7 +20,7 @@ class MatiereListCreateView(generics.ListCreateAPIView):
 class MatiereRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Matiere.objects.all()
     serializer_class = MatiereSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 # ✅ CRUD for Groups (Groupes)
 class GroupeListCreateView(generics.ListCreateAPIView):
@@ -59,12 +59,12 @@ class DisponibiliteEnseignantRetrieveUpdateDestroyView(generics.RetrieveUpdateDe
 class PlanningHebdomadaireListCreateView(generics.ListCreateAPIView):
     queryset = PlanningHebdomadaire.objects.all()
     serializer_class = PlanningHebdomadaireSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 class PlanningHebdomadaireRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = PlanningHebdomadaire.objects.all()
     serializer_class = PlanningHebdomadaireSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
