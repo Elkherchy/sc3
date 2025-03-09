@@ -1,6 +1,8 @@
 from django.urls import path
 from .views import *
 
+from .views import generate_schedule_api, set_fixed_schedule  # ✅ Vérifie l'import
+
 urlpatterns = [
     # ✅ Subjects (Matieres)
     path('matieres/', MatiereListCreateView.as_view(), name='matieres-list-create'),
