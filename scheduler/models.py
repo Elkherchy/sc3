@@ -34,6 +34,48 @@ class Groupe(models.Model):
 
     def __str__(self):
         return self.nom_groupe
+from django.db import models
+
+class CalendrierException(models.Model):
+    TYPE_EXCEPTION = [
+        ("ajout", "Ajout"),  # Adding a new day or time slot
+        ("suppression", "Suppression")  # Removing a default time slot
+    ]
+
+    JOURS_SEMAINE = [
+        ("Lundi", "Lundi"),
+        ("Mardi", "Mardi"),
+        ("Mercredi", "Mercredi"),
+        ("Jeudi", "Jeudi"),
+        ("Vendredi", "Vendredi"),
+        ("Samedi", "Samedi"),
+        ("Dimanche", "Dimanche")  # Only for exceptional cases
+    ]
+
+    CRENEAUX_HORAIRES = [
+        (1, "08h00 - 09h30"),
+        (2, "09h45 - 11h15"),
+        (3, "11h30 - 13h00"),
+        (4, "15h00 - 16h30"),
+        (5, "17h00 - 18h30")
+    ]
+
+    jour_semaine = models.CharField(max_length=20, choices=JOURS_SEMAINE)
+    creneau_horaire = models.IntegerField(choices=CRENEAUX_HORAIRES)
+    type_exception = models.CharField(max_length=20, choices=TYPE_EXCEPTION)
+    date = models.DateField()  # The week where the exception applies
+
+    def __str__(self):
+        return f"{self.type_exception} - {self.jour_semaine} ({self.get_creneau_horaire_display()}) on {self.date}"
+
+
+class ChargeHebdomadaire(models.Model):
+    matiere = models.ForeignKey(Matiere, on_delete=models.CASCADE)
+    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE)
+    heures_cm = models.IntegerField()
+    heures_td = models.IntegerField()
+    heures_tp = models.IntegerField()
+
 
 
 # -----------------------

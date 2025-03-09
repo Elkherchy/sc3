@@ -36,4 +36,12 @@ urlpatterns = [
 
     # ✅ Export Schedule
     path('export-schedule-excel/', export_schedule_excel, name='export-schedule-excel'),
+     path('calendrier-exceptions/', CalendrierExceptionListCreateView.as_view(), name='calendrier-exception-list-create'),
+    path('calendrier-exceptions/<int:pk>/', CalendrierExceptionRetrieveUpdateDestroyView.as_view(), name='calendrier-exception-detail'),
+    path('calendrier/', FullCalendrierView.as_view(), name='full-calendrier'),
+
+
+    # 📌 NEW: Weekly Workload Management (Charge Hebdomadaire)
+    path('charge-hebdomadaire/', ChargeHebdomadaireListCreateView.as_view(), name='charge-list-create'),
+    path('charge-hebdomadaire/<int:pk>/', ChargeHebdomadaireRetrieveUpdateDestroyView.as_view(), name='charge-detail'),
 ]
