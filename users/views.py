@@ -8,6 +8,7 @@ from rest_framework import status
 from django.contrib.auth.models import Group, Permission
 from users.models import User
 from users.serializers import UserSerializer
+from rest_framework.generics import UpdateAPIView
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import AllowAny
@@ -110,7 +111,10 @@ class CreateEnseignantView(APIView):
                 "error": str(e)
             }, status=status.HTTP_400_BAD_REQUEST)
 
-
+class UpdateEnseignantView(UpdateAPIView):
+    queryset = User.objects.filter(role='enseignant')
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
         
 
 class LogoutView(APIView):

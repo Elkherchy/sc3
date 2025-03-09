@@ -41,7 +41,10 @@ class TeacherGroupeSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeacherGroupe
         fields = '__all__'
-
+class FixedScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FixedSchedule
+        fields = '__all__'
 class DisponibiliteEnseignantSerializer(serializers.ModelSerializer):
     class Meta:
         model = DisponibiliteEnseignant

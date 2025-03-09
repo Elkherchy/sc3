@@ -1,4 +1,5 @@
 from django.db import models
+from sc3 import settings
 from users.models import User  # Import the User model
 
 # -----------------------
@@ -35,6 +36,17 @@ class Groupe(models.Model):
     def __str__(self):
         return self.nom_groupe
 from django.db import models
+class FixedSchedule(models.Model):
+    groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE)
+    matiere = models.ForeignKey(Matiere, on_delete=models.CASCADE)
+    jour_semaine = models.CharField(max_length=10, choices=[
+        ('Lundi', 'Lundi'), ('Mardi', 'Mardi'), ('Mercredi', 'Mercredi'),
+        ('Jeudi', 'Jeudi'), ('Vendredi', 'Vendredi'), ('Samedi', 'Samedi')
+    ])
+    creneau_horaire = models.IntegerField(choices=[(1, '08:00 - 09:30'), (2, '09:45 - 11:15'),
+                                                   (3, '11:30 - 13:00'), (4, '15:00 - 16:30'),
+                                                   (5, '17:00 - 18:30')])
+    enseignant = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # ✅ Use User Model
 
 class CalendrierException(models.Model):
     TYPE_EXCEPTION = [

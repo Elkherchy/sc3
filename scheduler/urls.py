@@ -29,7 +29,7 @@ urlpatterns = [
     # ✅ Weekly Schedule
     path('planning/', PlanningHebdomadaireListCreateView.as_view(), name='planning-list-create'),
     path('planning/<int:pk>/', PlanningHebdomadaireRetrieveUpdateDestroyView.as_view(), name='planning-detail'),
-
+    path('set-fixed-schedule/', FixedScheduleListCreateView.as_view(), name='set-fixed-schedule'),
     # ✅ Automatic Timetable Generation
     path('generate-schedule/', generate_schedule_api, name='generate-schedule'),
     path('set-fixed-schedule/', set_fixed_schedule, name='set-fixed-schedule'),

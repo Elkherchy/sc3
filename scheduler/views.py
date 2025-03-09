@@ -79,7 +79,10 @@ class CalendrierExceptionListCreateView(generics.ListCreateAPIView):
     queryset = CalendrierException.objects.all()
     serializer_class = CalendrierExceptionSerializer
     permission_classes = [AllowAny]
-
+class FixedScheduleListCreateView(generics.ListCreateAPIView):
+    queryset = FixedSchedule.objects.all()
+    serializer_class = FixedScheduleSerializer
+    permission_classes = [AllowAny]
 class CalendrierExceptionRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CalendrierException.objects.all()
     serializer_class = CalendrierExceptionSerializer
