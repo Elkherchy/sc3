@@ -97,15 +97,16 @@ def generate_schedule(groupe_id):
                 teacher_assignment = MatiereTeacher.objects.filter(matiere_id=m_id).first()
                 teacher = teacher_assignment.enseignant if teacher_assignment else None
 
-                PlanningHebdomadaire.objects.create(
-                    groupe=groupe,
-                    matiere_id=m_id,
-                    enseignant=teacher,
-                    jour_semaine=d,
-                    creneau_horaire=t,
-                    type_lecon="CM"
-                )
-                scheduled_classes.append((m_id, d, t))
+            PlanningHebdomadaire.objects.create(
+                groupe=groupe,
+                matiere_id=m_id,
+                enseignant=teacher,
+                jour_semaine=d,
+                creneau_horaire=t,  # Ensure this matches the time slot correctly
+                type_lecon="CM"
+            )
+
+        scheduled_classes.append((m_id, d, t))
 
     if status == pywraplp.Solver.OPTIMAL:
         return True, "✅ Full schedule successfully generated"

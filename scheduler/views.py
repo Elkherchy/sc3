@@ -196,16 +196,16 @@ def generate_schedule_api(request):
     if not groupe_id:
         return Response({"status": "error", "message": "❌ Groupe ID is required."}, status=400)
 
-    success, message = generate_schedule(groupe_id)  # ✅ Call function correctly
- # Generate for the given group
+    success, message = generate_schedule(groupe_id)  # ✅ Generate the schedule for the given group
+
     if not success:
         return Response({"status": "error", "message": message}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Fetch the generated schedule for the specific group
+    # ✅ Fetch the generated schedule for the specific group from the database
     schedule = {day: [] for day in DAYS_ORDER}
 
     try:
-        groupe = Groupe.objects.get(groupe_id=groupe_id)
+        groupe = Groupe.objects.get(pk=groupe_id)  # Ensure correct ID lookup
     except Groupe.DoesNotExist:
         return Response({"status": "error", "message": "❌ Groupe not found."}, status=400)
 
@@ -225,26 +225,36 @@ def generate_schedule_api(request):
         "groupe": groupe.nom_groupe,
         "schedule": schedule  # Return the generated timetable directly
     }, status=status.HTTP_201_CREATED)
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def set_fixed_schedule(request):
     """
     API endpoint to manually set a class at a specific time slot.
     """
-    from scheduler.models import PlanningHebdomadaire
     try:
         data = request.data
+        print("📌 Received data for fixed schedule:", data)  # Debugging
+
+        # Convert values to integers
+        groupe_id = int(data["groupe_id"])
+        matiere_id = int(data["matiere_id"])
+        enseignant_id = int(data["enseignant_id"])
+        jour_semaine = data["jour_semaine"]
+        creneau_horaire = int(data["creneau_horaire"])
+
         PlanningHebdomadaire.objects.create(
-            groupe_id=data["groupe_id"],
-            matiere_id=data["matiere_id"],
-            enseignant_id=data["enseignant_id"],
-            jour_semaine=data["jour_semaine"],
-            creneau_horaire=data["creneau_horaire"],
+            groupe_id=groupe_id,
+            matiere_id=matiere_id,
+            enseignant_id=enseignant_id,
+            jour_semaine=jour_semaine,
+            creneau_horaire=creneau_horaire,
             type_lecon="CM"
         )
-        return Response({"status": "success", "message": "Class fixed successfully"}, status=status.HTTP_201_CREATED)
+
+        return Response({"status": "success", "message": "✅ Class fixed successfully"}, status=status.HTTP_201_CREATED)
+
     except Exception as e:
+        print("❌ Error in set_fixed_schedule:", str(e))  # Debugging
         return Response({"status": "error", "message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
@@ -271,7 +281,7 @@ TIME_SLOTS = {
 }
 
 DAYS_ORDER = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"]
-
+@api_view(['GET'])
 def export_schedule_json(request, groupe_id):
     """
     Exports the schedule in a structured JSON format for a specific group.
@@ -288,7 +298,7 @@ def export_schedule_json(request, groupe_id):
             "Matière": entry.matiere.nom_matiere,
             "Type": entry.type_lecon,
             "Groupe": groupe.nom_groupe,  # Only one group now
-            "Enseignant": entry.enseignant.username
+            "Enseignant": entry.enseignant.username if entry.enseignant else "N/A"
         })
 
     return JsonResponse(schedule, safe=False)
