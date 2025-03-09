@@ -5,6 +5,13 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from .models import *
 from .serializers import *
+
+from corsheaders.decorators import cors_exempt
+
+from django.views.decorators.csrf import csrf_exempt
+e
+
+
 from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -16,6 +23,7 @@ from datetime import date, timedelta
 from scheduler.logic.scheduler_logic import generate_schedule
 from django.contrib.auth.decorators import login_required
 # ✅ CRUD for Calendrier (Time Slots)
+@csrf_exempt
 class FullCalendrierView(APIView):
     permission_classes = [AllowAny]  # ✅ Allow access without authentication
 
@@ -78,99 +86,114 @@ class FullCalendrierView(APIView):
                 })
 
         return Response(full_calendar)
+
+@csrf_exempt
 class CalendrierExceptionListCreateView(generics.ListCreateAPIView):
     queryset = CalendrierException.objects.all()
     serializer_class = CalendrierExceptionSerializer
     permission_classes = [AllowAny]
+@csrf_exempt
 class FixedScheduleListCreateView(generics.ListCreateAPIView):
     queryset = FixedSchedule.objects.all()
     serializer_class = FixedScheduleSerializer
     permission_classes = [AllowAny]
+@csrf_exempt
 class CalendrierExceptionRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = CalendrierException.objects.all()
     serializer_class = CalendrierExceptionSerializer
     permission_classes = [AllowAny]
 # ✅ CRUD for Charge Hebdomadaire (Weekly Workload)
+@csrf_exempt
 class ChargeHebdomadaireListCreateView(generics.ListCreateAPIView):
     queryset = ChargeHebdomadaire.objects.all()
     serializer_class = ChargeHebdomadaireSerializer
     permission_classes = [AllowAny]
 
+@csrf_exempt
 class ChargeHebdomadaireRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = ChargeHebdomadaire.objects.all()
     serializer_class = ChargeHebdomadaireSerializer
     permission_classes = [AllowAny]
+
+@csrf_exempt
 class MatiereListCreateView(generics.ListCreateAPIView):
     queryset = Matiere.objects.all()
     serializer_class = MatiereSerializer
     permission_classes = [AllowAny]
-
+@csrf_exempt
 class MatiereRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Matiere.objects.all()
     serializer_class = MatiereSerializer
     permission_classes = [AllowAny]
 
 # ✅ CRUD for Groups (Groupes)
+@csrf_exempt
 class GroupeListCreateView(generics.ListCreateAPIView):
     queryset = Groupe.objects.all()
     serializer_class = GroupeSerializer
     permission_classes = [AllowAny]
-
+@csrf_exempt
 class GroupeRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Groupe.objects.all()
     serializer_class = GroupeSerializer
     permission_classes = [AllowAny]
 
 # ✅ CRUD for Assigning Teacher to Subject (MatiereTeacher)
+@csrf_exempt
 class MatiereTeacherListCreateView(generics.ListCreateAPIView):
     queryset = MatiereTeacher.objects.all()
     serializer_class = MatiereTeacherSerializer
     permission_classes = [AllowAny]
 
+@csrf_exempt
 class MatiereTeacherRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MatiereTeacher.objects.all()
     serializer_class = MatiereTeacherSerializer
     permission_classes = [AllowAny]
 
 # ✅ CRUD for Assigning Subject to Group (GroupeMatiere)
+@csrf_exempt
 class GroupeMatiereListCreateView(generics.ListCreateAPIView):
     queryset = GroupeMatiere.objects.all()
     serializer_class = GroupeMatiereSerializer
     permission_classes = [AllowAny]
-
+@csrf_exempt
 class GroupeMatiereRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = GroupeMatiere.objects.all()
     serializer_class = GroupeMatiereSerializer
     permission_classes = [AllowAny]
 
 # ✅ CRUD for Assigning Teacher to Group (TeacherGroupe)
+@csrf_exempt
 class TeacherGroupeListCreateView(generics.ListCreateAPIView):
     queryset = TeacherGroupe.objects.all()
     serializer_class = TeacherGroupeSerializer
     permission_classes = [AllowAny]
-
+@csrf_exempt
 class TeacherGroupeRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = TeacherGroupe.objects.all()
     serializer_class = TeacherGroupeSerializer
     permission_classes = [AllowAny]
 
 # ✅ CRUD for Teacher Availability (DisponibiliteEnseignant)
+@csrf_exempt
 class DisponibiliteEnseignantListCreateView(generics.ListCreateAPIView):
     queryset = DisponibiliteEnseignant.objects.all()
     serializer_class = DisponibiliteEnseignantSerializer
     permission_classes = [AllowAny]
-
+@csrf_exempt
 class DisponibiliteEnseignantRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = DisponibiliteEnseignant.objects.all()
     serializer_class = DisponibiliteEnseignantSerializer
     permission_classes = [AllowAny]
 
 # ✅ CRUD for Weekly Schedule (PlanningHebdomadaire)
+@csrf_exempt
 class PlanningHebdomadaireListCreateView(generics.ListCreateAPIView):
     queryset = PlanningHebdomadaire.objects.all()
     serializer_class = PlanningHebdomadaireSerializer
     permission_classes = [AllowAny]
-
+@csrf_exempt
 class PlanningHebdomadaireRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = PlanningHebdomadaire.objects.all()
     serializer_class = PlanningHebdomadaireSerializer
@@ -185,6 +208,7 @@ TIME_SLOTS = {
     5: "17:00 - 18:30"
 }
 DAYS_ORDER = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"]
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def generate_schedule_api(request):
@@ -225,6 +249,7 @@ def generate_schedule_api(request):
         "groupe": groupe.nom_groupe,
         "schedule": schedule  # Return the generated timetable directly
     }, status=status.HTTP_201_CREATED)
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def set_fixed_schedule(request):
@@ -257,6 +282,7 @@ def set_fixed_schedule(request):
         print("❌ Error in set_fixed_schedule:", str(e))  # Debugging
         return Response({"status": "error", "message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+@csrf_exempt
 @api_view(['GET'])
 @permission_classes([AllowAny])
 
@@ -281,6 +307,7 @@ TIME_SLOTS = {
 }
 
 DAYS_ORDER = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"]
+@csrf_exempt
 @api_view(['GET'])
 def export_schedule_json(request, groupe_id):
     """
