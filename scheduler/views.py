@@ -196,7 +196,8 @@ def generate_schedule_api(request):
     if not groupe_id:
         return Response({"status": "error", "message": "❌ Groupe ID is required."}, status=400)
 
-    success, message = generate_schedule(groupe_id)  # Generate for the given group
+    success, message = generate_schedule(groupe_id)  # ✅ Call function correctly
+ # Generate for the given group
     if not success:
         return Response({"status": "error", "message": message}, status=status.HTTP_400_BAD_REQUEST)
 
