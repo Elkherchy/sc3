@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     "rest_framework_simplejwt.token_blacklist",
     'users',
+    'scheduler',
     'corsheaders',
     'django.contrib.staticfiles',
 ]
