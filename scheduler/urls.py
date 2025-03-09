@@ -2,30 +2,38 @@ from django.urls import path
 from .views import *
 
 urlpatterns = [
-    # Subjects (Matieres)
+    # ✅ Subjects (Matieres)
     path('matieres/', MatiereListCreateView.as_view(), name='matieres-list-create'),
     path('matieres/<int:pk>/', MatiereRetrieveUpdateDestroyView.as_view(), name='matieres-detail'),
 
-    # Groups (Groupes)
+    # ✅ Groups (Groupes)
     path('groupes/', GroupeListCreateView.as_view(), name='groupes-list-create'),
     path('groupes/<int:pk>/', GroupeRetrieveUpdateDestroyView.as_view(), name='groupes-detail'),
 
-    # Teacher-Subject Relationship
+    # ✅ Assign Teacher to Subject
     path('matiere-teachers/', MatiereTeacherListCreateView.as_view(), name='matiere-teacher-list-create'),
     path('matiere-teachers/<int:pk>/', MatiereTeacherRetrieveUpdateDestroyView.as_view(), name='matiere-teacher-detail'),
 
-    # Teacher Availability
+    # ✅ Assign Subject to Group
+    path('groupe-matieres/', GroupeMatiereListCreateView.as_view(), name='groupe-matiere-list-create'),
+    path('groupe-matieres/<int:pk>/', GroupeMatiereRetrieveUpdateDestroyView.as_view(), name='groupe-matiere-detail'),
+
+    # ✅ Assign Teacher to Group
+    path('teacher-groupes/', TeacherGroupeListCreateView.as_view(), name='teacher-groupe-list-create'),
+    path('teacher-groupes/<int:pk>/', TeacherGroupeRetrieveUpdateDestroyView.as_view(), name='teacher-groupe-detail'),
+
+    # ✅ Teacher Availability
     path('disponibilites/', DisponibiliteEnseignantListCreateView.as_view(), name='disponibilite-list-create'),
     path('disponibilites/<int:pk>/', DisponibiliteEnseignantRetrieveUpdateDestroyView.as_view(), name='disponibilite-detail'),
 
-    # Weekly Schedule
+    # ✅ Weekly Schedule
     path('planning/', PlanningHebdomadaireListCreateView.as_view(), name='planning-list-create'),
     path('planning/<int:pk>/', PlanningHebdomadaireRetrieveUpdateDestroyView.as_view(), name='planning-detail'),
 
-    # Automatic Timetable Generation
-     path('generate-schedule/', generate_schedule_api, name='generate-schedule'),
+    # ✅ Automatic Timetable Generation
+    path('generate-schedule/', generate_schedule_api, name='generate-schedule'),
     path('set-fixed-schedule/', set_fixed_schedule, name='set-fixed-schedule'),
 
-    # Export Schedule
+    # ✅ Export Schedule
     path('export-schedule-excel/', export_schedule_excel, name='export-schedule-excel'),
 ]

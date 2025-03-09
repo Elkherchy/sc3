@@ -10,8 +10,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from scheduler.logic.scheduler_logic import generate_schedule
 from django.contrib.auth.decorators import login_required
-
-# ✅ CRUD for Subjects (Matieres)
 class MatiereListCreateView(generics.ListCreateAPIView):
     queryset = Matiere.objects.all()
     serializer_class = MatiereSerializer
@@ -33,7 +31,7 @@ class GroupeRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = GroupeSerializer
     permission_classes = [AllowAny]
 
-# ✅ CRUD for Teacher-Subject Relationship (MatiereTeacher)
+# ✅ CRUD for Assigning Teacher to Subject (MatiereTeacher)
 class MatiereTeacherListCreateView(generics.ListCreateAPIView):
     queryset = MatiereTeacher.objects.all()
     serializer_class = MatiereTeacherSerializer
@@ -42,6 +40,28 @@ class MatiereTeacherListCreateView(generics.ListCreateAPIView):
 class MatiereTeacherRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MatiereTeacher.objects.all()
     serializer_class = MatiereTeacherSerializer
+    permission_classes = [AllowAny]
+
+# ✅ CRUD for Assigning Subject to Group (GroupeMatiere)
+class GroupeMatiereListCreateView(generics.ListCreateAPIView):
+    queryset = GroupeMatiere.objects.all()
+    serializer_class = GroupeMatiereSerializer
+    permission_classes = [AllowAny]
+
+class GroupeMatiereRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = GroupeMatiere.objects.all()
+    serializer_class = GroupeMatiereSerializer
+    permission_classes = [AllowAny]
+
+# ✅ CRUD for Assigning Teacher to Group (TeacherGroupe)
+class TeacherGroupeListCreateView(generics.ListCreateAPIView):
+    queryset = TeacherGroupe.objects.all()
+    serializer_class = TeacherGroupeSerializer
+    permission_classes = [AllowAny]
+
+class TeacherGroupeRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = TeacherGroupe.objects.all()
+    serializer_class = TeacherGroupeSerializer
     permission_classes = [AllowAny]
 
 # ✅ CRUD for Teacher Availability (DisponibiliteEnseignant)
