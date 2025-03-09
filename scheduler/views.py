@@ -1,5 +1,5 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
@@ -15,7 +15,7 @@ from django.contrib.auth.decorators import login_required
 class MatiereListCreateView(generics.ListCreateAPIView):
     queryset = Matiere.objects.all()
     serializer_class = MatiereSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 class MatiereRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Matiere.objects.all()
@@ -26,34 +26,34 @@ class MatiereRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 class GroupeListCreateView(generics.ListCreateAPIView):
     queryset = Groupe.objects.all()
     serializer_class = GroupeSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 class GroupeRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Groupe.objects.all()
     serializer_class = GroupeSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 # ✅ CRUD for Teacher-Subject Relationship (MatiereTeacher)
 class MatiereTeacherListCreateView(generics.ListCreateAPIView):
     queryset = MatiereTeacher.objects.all()
     serializer_class = MatiereTeacherSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 class MatiereTeacherRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = MatiereTeacher.objects.all()
     serializer_class = MatiereTeacherSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 # ✅ CRUD for Teacher Availability (DisponibiliteEnseignant)
 class DisponibiliteEnseignantListCreateView(generics.ListCreateAPIView):
     queryset = DisponibiliteEnseignant.objects.all()
     serializer_class = DisponibiliteEnseignantSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 class DisponibiliteEnseignantRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     queryset = DisponibiliteEnseignant.objects.all()
     serializer_class = DisponibiliteEnseignantSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 # ✅ CRUD for Weekly Schedule (PlanningHebdomadaire)
 class PlanningHebdomadaireListCreateView(generics.ListCreateAPIView):
@@ -67,7 +67,7 @@ class PlanningHebdomadaireRetrieveUpdateDestroyView(generics.RetrieveUpdateDestr
     permission_classes = [IsAuthenticated]
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def generate_schedule_api(request):
     """
     API endpoint to generate the automatic schedule.
@@ -79,7 +79,7 @@ def generate_schedule_api(request):
         return Response({"status": "error", "message": message}, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def set_fixed_schedule(request):
     """
     API endpoint to manually set a class at a specific time slot.
@@ -99,7 +99,7 @@ def set_fixed_schedule(request):
     except Exception as e:
         return Response({"status": "error", "message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def export_schedule_excel(request):
     import pandas as pd
     from django.http import HttpResponse
