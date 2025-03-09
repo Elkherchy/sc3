@@ -36,6 +36,7 @@ urlpatterns = [
 
     # ✅ Export Schedule
     path('export-schedule-excel/', export_schedule_excel, name='export-schedule-excel'),
+    path('export-schedule/<int:groupe_id>/', export_schedule_json, name='export-schedule'),
      path('calendrier-exceptions/', CalendrierExceptionListCreateView.as_view(), name='calendrier-exception-list-create'),
     path('calendrier-exceptions/<int:pk>/', CalendrierExceptionRetrieveUpdateDestroyView.as_view(), name='calendrier-exception-detail'),
     path('calendrier/', FullCalendrierView.as_view(), name='full-calendrier'),

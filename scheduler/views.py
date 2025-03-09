@@ -5,10 +5,13 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from .models import *
 from .serializers import *
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
+from django.http import JsonResponse
+from scheduler.models import PlanningHebdomadaire
 from datetime import date, timedelta
 from scheduler.logic.scheduler_logic import generate_schedule
 from django.contrib.auth.decorators import login_required
@@ -173,17 +176,54 @@ class PlanningHebdomadaireRetrieveUpdateDestroyView(generics.RetrieveUpdateDestr
     serializer_class = PlanningHebdomadaireSerializer
     permission_classes = [AllowAny]
 
+
+TIME_SLOTS = {
+    1: "08:00 - 09:30",
+    2: "09:45 - 11:15",
+    3: "11:30 - 13:00",
+    4: "15:00 - 16:30",
+    5: "17:00 - 18:30"
+}
+DAYS_ORDER = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"]
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def generate_schedule_api(request):
     """
-    API endpoint to generate the automatic schedule.
+    Generates a schedule for a specific group and returns it directly in the response.
     """
-    success, message = generate_schedule()
-    if success:
-        return Response({"status": "success", "message": message}, status=status.HTTP_201_CREATED)
-    else:
+    groupe_id = request.data.get("groupe")  # Get the requested group from POST data
+
+    if not groupe_id:
+        return Response({"status": "error", "message": "❌ Groupe ID is required."}, status=400)
+
+    success, message = generate_schedule(groupe_id)  # Generate for the given group
+    if not success:
         return Response({"status": "error", "message": message}, status=status.HTTP_400_BAD_REQUEST)
+
+    # Fetch the generated schedule for the specific group
+    schedule = {day: [] for day in DAYS_ORDER}
+
+    try:
+        groupe = Groupe.objects.get(groupe_id=groupe_id)
+    except Groupe.DoesNotExist:
+        return Response({"status": "error", "message": "❌ Groupe not found."}, status=400)
+
+    planning = PlanningHebdomadaire.objects.filter(groupe=groupe).select_related('matiere', 'enseignant')
+
+    for entry in planning:
+        schedule[entry.jour_semaine].append({
+            "Heure": TIME_SLOTS.get(entry.creneau_horaire, "Unknown"),
+            "Matière": entry.matiere.nom_matiere,
+            "Type": entry.type_lecon,
+            "Enseignant": entry.enseignant.username if entry.enseignant else "N/A"
+        })
+
+    return Response({
+        "status": "success",
+        "message": f"✅ Full schedule successfully generated for {groupe.nom_groupe}",
+        "groupe": groupe.nom_groupe,
+        "schedule": schedule  # Return the generated timetable directly
+    }, status=status.HTTP_201_CREATED)
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -205,8 +245,10 @@ def set_fixed_schedule(request):
         return Response({"status": "success", "message": "Class fixed successfully"}, status=status.HTTP_201_CREATED)
     except Exception as e:
         return Response({"status": "error", "message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 @api_view(['GET'])
 @permission_classes([AllowAny])
+
 def export_schedule_excel(request):
     import pandas as pd
     from django.http import HttpResponse
@@ -218,3 +260,34 @@ def export_schedule_excel(request):
     response['Content-Disposition'] = 'attachment; filename=schedule.xlsx'
     df.to_excel(response, index=False)
     return response
+# Define time slots mapping
+TIME_SLOTS = {
+    1: "08:00 - 09:30",
+    2: "09:45 - 11:15",
+    3: "11:30 - 13:00",
+    4: "15:00 - 16:30",
+    5: "17:00 - 18:30"
+}
+
+DAYS_ORDER = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"]
+
+def export_schedule_json(request, groupe_id):
+    """
+    Exports the schedule in a structured JSON format for a specific group.
+    """
+    groupe = get_object_or_404(Groupe, pk=groupe_id)  # Get the group or return 404
+    schedule = {day: [] for day in DAYS_ORDER}  # Initialize empty schedule
+
+    # Fetch all planned lessons for the specific group
+    planning = PlanningHebdomadaire.objects.filter(groupe=groupe).select_related('matiere', 'enseignant')
+
+    for entry in planning:
+        schedule[entry.jour_semaine].append({
+            "Heure": TIME_SLOTS.get(entry.creneau_horaire, "Unknown"),
+            "Matière": entry.matiere.nom_matiere,
+            "Type": entry.type_lecon,
+            "Groupe": groupe.nom_groupe,  # Only one group now
+            "Enseignant": entry.enseignant.username
+        })
+
+    return JsonResponse(schedule, safe=False)
