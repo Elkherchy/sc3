@@ -29,11 +29,19 @@ urlpatterns = [
     # ✅ Weekly Schedule
     path('planning/', PlanningHebdomadaireListCreateView.as_view(), name='planning-list-create'),
     path('planning/<int:pk>/', PlanningHebdomadaireRetrieveUpdateDestroyView.as_view(), name='planning-detail'),
-
+    path('set-fixed-schedule/', FixedScheduleListCreateView.as_view(), name='set-fixed-schedule'),
     # ✅ Automatic Timetable Generation
     path('generate-schedule/', generate_schedule_api, name='generate-schedule'),
     path('set-fixed-schedule/', set_fixed_schedule, name='set-fixed-schedule'),
 
     # ✅ Export Schedule
     path('export-schedule-excel/', export_schedule_excel, name='export-schedule-excel'),
+     path('calendrier-exceptions/', CalendrierExceptionListCreateView.as_view(), name='calendrier-exception-list-create'),
+    path('calendrier-exceptions/<int:pk>/', CalendrierExceptionRetrieveUpdateDestroyView.as_view(), name='calendrier-exception-detail'),
+    path('calendrier/', FullCalendrierView.as_view(), name='full-calendrier'),
+
+
+    # 📌 NEW: Weekly Workload Management (Charge Hebdomadaire)
+    path('charge-hebdomadaire/', ChargeHebdomadaireListCreateView.as_view(), name='charge-list-create'),
+    path('charge-hebdomadaire/<int:pk>/', ChargeHebdomadaireRetrieveUpdateDestroyView.as_view(), name='charge-detail'),
 ]

@@ -8,7 +8,7 @@ class User(AbstractUser):
         ('enseignant', 'Enseignant'),
     ]
     role = models.CharField(max_length=20, choices=ROLES_CHOICES)
-    email = models.CharField(max_length=20)
+    email = models.CharField(max_length=255)
     USERNAME_FIELD = 'username'
     def __str__(self):
         return f"{self.email}"

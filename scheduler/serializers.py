@@ -25,12 +25,26 @@ class MatiereTeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = MatiereTeacher
         fields = '__all__'
+class CalendrierExceptionSerializer(serializers.ModelSerializer):
+    creneau_horaire_display = serializers.CharField(source='get_creneau_horaire_display', read_only=True)
+
+    class Meta:
+        model = CalendrierException
+        fields = '__all__'
+# ✅ Serializer for Charge Hebdomadaire (Weekly Workload)
+class ChargeHebdomadaireSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChargeHebdomadaire
+        fields = '__all__'
 
 class TeacherGroupeSerializer(serializers.ModelSerializer):
     class Meta:
         model = TeacherGroupe
         fields = '__all__'
-
+class FixedScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FixedSchedule
+        fields = '__all__'
 class DisponibiliteEnseignantSerializer(serializers.ModelSerializer):
     class Meta:
         model = DisponibiliteEnseignant
