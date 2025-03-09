@@ -88,7 +88,7 @@ DATABASES = {
         'NAME': 'sc3' , # Replace with your database name
         'USER': 'elkherchybaba',  # Replace with your MySQL username
         'PASSWORD': 'kh@38405659',  # Replace with your MySQL password
-        'HOST': 'db',  # If your database is on the same machine, use 'localhost'
+        'HOST': '127.0.0.1',  # If your database is on the same machine, use 'localhost'
         'PORT': '5432'  # Default MySQL port
     }
 }
