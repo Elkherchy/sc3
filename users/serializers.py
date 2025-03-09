@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from scheduler.models import TeacherGroupe, MatiereTeacher
+from scheduler.models import TeacherGroupe, MatiereTeacher , Matiere , Groupe
 from users.models import User
 
 class UserSerializer(serializers.ModelSerializer):
@@ -10,9 +10,16 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username','password', 'role','email', 'matieres', 'groupes']
     def get_groupes(self, obj):
-        return TeacherGroupe.objects.filter(enseignant=obj).values_list("groupe", flat=True)
-
+        return   list(
+           Groupe.objects.filter(
+                id__in=TeacherGroupe.objects.filter(enseignant=obj).values_list("groupe", flat=True)
+            ).values_list("groupe", flat=True)
+        )
     def get_matieres(self, obj):
-        return MatiereTeacher.objects.filter(enseignant=obj).values_list("matiere", flat=True)
+        return list(
+            Matiere.objects.filter(
+                id__in=MatiereTeacher.objects.filter(enseignant=obj).values_list("matiere", flat=True)
+            ).values_list("nom_matiere", flat=True)
+        )
     def get_username (self, obj):
         return obj.username if  obj.username else obj.first_name
