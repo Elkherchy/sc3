@@ -10,11 +10,13 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username','password', 'role','email', 'matieres', 'groupes']
     def get_groupes(self, obj):
-        return   list(
-           Groupe.objects.filter(
-                id__in=TeacherGroupe.objects.filter(enseignant=obj).values_list("groupe", flat=True)
-            ).values_list("groupe", flat=True)
-        )
+        return list(
+            Groupe.objects.filter(
+                groupe_id__in=TeacherGroupe.objects.filter(enseignant=obj).values_list("groupe", flat=True)
+            ).values_list("nom_groupe", flat=True)  # Utiliser le bon champ ici
+    )
+
+        
     def get_matieres(self, obj):
         return list(
             Matiere.objects.filter(
