@@ -2,7 +2,7 @@ from django.db import models
 from users.models import User  # Import the User model
 
 # -----------------------
-# 📚 Subjects (Matieres)
+# 📚 Subjects (Matiere)
 # -----------------------
 class Matiere(models.Model):
     FILIERE_CHOICES = [
@@ -17,7 +17,8 @@ class Matiere(models.Model):
     nom_matiere = models.CharField(max_length=255)
     credits = models.IntegerField()
     semestre = models.IntegerField()
-    filiere = models.CharField(max_length=10, choices=FILIERE_CHOICES)
+
+    filiere = models.CharField(max_length=13, choices=FILIERE_CHOICES)
 
     def __str__(self):
         return f"{self.nom_matiere} ({self.code_matiere})"
@@ -78,7 +79,7 @@ class DisponibiliteEnseignant(models.Model):
     ]
 
     enseignant = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': 'enseignant'})
-    jour_semaine = models.CharField(max_length=10, choices=JOURS_CHOICES)
+    jour_semaine = models.CharField(max_length=13, choices=JOURS_CHOICES)
     creneau_horaire = models.IntegerField()
 
     class Meta:
@@ -94,7 +95,7 @@ class PlanningHebdomadaire(models.Model):
     groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE)
     matiere = models.ForeignKey(Matiere, on_delete=models.CASCADE)
     enseignant = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': 'enseignant'})
-    jour_semaine = models.CharField(max_length=10, choices=DisponibiliteEnseignant.JOURS_CHOICES)
+    jour_semaine = models.CharField(max_length=13, choices=DisponibiliteEnseignant.JOURS_CHOICES)
     creneau_horaire = models.IntegerField()
     type_lecon = models.CharField(max_length=2, choices=TYPE_LECON_CHOICES)
 
@@ -124,8 +125,8 @@ class ExceptionsPlanning(models.Model):
 
     groupe = models.ForeignKey(Groupe, on_delete=models.CASCADE)
     matiere = models.ForeignKey(Matiere, on_delete=models.CASCADE)
-    type_exception = models.CharField(max_length=10, choices=TYPE_EXCEPTION_CHOICES)
-    jour_semaine = models.CharField(max_length=10, choices=DisponibiliteEnseignant.JOURS_CHOICES)
+    type_exception = models.CharField(max_length=13, choices=TYPE_EXCEPTION_CHOICES)
+    jour_semaine = models.CharField(max_length=13, choices=DisponibiliteEnseignant.JOURS_CHOICES)
     creneau_horaire = models.IntegerField()
     date = models.DateField()
 
