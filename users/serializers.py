@@ -13,15 +13,14 @@ class UserSerializer(serializers.ModelSerializer):
         return list(
             Groupe.objects.filter(
                 groupe_id__in=TeacherGroupe.objects.filter(enseignant=obj).values_list("groupe", flat=True)
-            ).values_list("nom_groupe", flat=True)  # Utiliser le bon champ ici
-    )
+            ).values_list("nom_groupe", flat=True)  # ✅ Récupérer le nom du groupe
+        )
 
-        
     def get_matieres(self, obj):
         return list(
             Matiere.objects.filter(
-                id__in=MatiereTeacher.objects.filter(enseignant=obj).values_list("matiere", flat=True)
-            ).values_list("nom_matiere", flat=True)
+                matiere_id__in=MatiereTeacher.objects.filter(enseignant=obj).values_list("matiere", flat=True)
+            ).values_list("nom_matiere", flat=True)  # ✅ Récupérer le nom de la matière
         )
     def get_username (self, obj):
         return obj.username if  obj.username else obj.first_name
