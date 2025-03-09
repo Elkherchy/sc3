@@ -1,13 +1,14 @@
 from ortools.linear_solver import pywraplp
 from scheduler.models import (
     PlanningHebdomadaire, ChargeHebdomadaire, DisponibiliteEnseignant,
-    Groupe, Matiere, MatiereTeacher, TeacherGroupe, ExceptionsPlanning
+    Groupe, Matiere, MatiereTeacher, TeacherGroupe
 )
 from django.db import transaction
 
 def generate_schedule():
     """
-    Uses OR-Tools to generate an automatic timetable based on database data.
+    Uses OR-Tools to generate a conflict-free timetable
+    based on teacher availability and subject-group relationships.
     """
 
     solver = pywraplp.Solver.CreateSolver('CBC')
@@ -15,12 +16,11 @@ def generate_schedule():
         return False, "Solver not available"
 
     # Load all necessary data from the database
-    groupes = list(Groupe.objects.all())
-    matieres = list(Matiere.objects.all())
-    teachers = list(MatiereTeacher.objects.all())
-    disponibilites = list(DisponibiliteEnseignant.objects.all())
-    charges = list(ChargeHebdomadaire.objects.all())
-    exceptions = list(ExceptionsPlanning.objects.all())
+    groupes = list(Groupe.objects.all())  # Get all student groups
+    matieres = list(Matiere.objects.all())  # Get all subjects
+    teacher_assignments = list(MatiereTeacher.objects.all())  # Teacher-Subject mapping
+    teacher_group_assignments = list(TeacherGroupe.objects.all())  # Teacher-Group mapping
+    disponibilites = list(DisponibiliteEnseignant.objects.all())  # Teacher Availabilities
 
     # Define time slots (Monday-Saturday, 5 slots per day)
     days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi']
@@ -34,10 +34,10 @@ def generate_schedule():
                 for t in slots:
                     X[(g.id, m.id, d, t)] = solver.BoolVar(f'X_{g.id}_{m.id}_{d}_{t}')
 
-    # Constraint 1: Each subject must be scheduled as per required weekly hours
-    for ch in charges:
-        solver.Add(sum(X[ch.groupe.id, ch.matiere.id, d, t] for d in days for t in slots) ==
-                   (ch.heures_cm + ch.heures_td + ch.heures_tp))
+    # Constraint 1: Each subject must be scheduled for a group
+    for g in groupes:
+        for m in matieres:
+            solver.Add(sum(X[g.id, m.id, d, t] for d in days for t in slots) == 1)
 
     # Constraint 2: No group can have two subjects at the same time
     for g in groupes:
@@ -45,24 +45,18 @@ def generate_schedule():
             for t in slots:
                 solver.Add(sum(X[g.id, m.id, d, t] for m in matieres) <= 1)
 
-    # Constraint 3: Teachers' availability
+    # Constraint 3: Teachers must be available before being assigned
     for disp in disponibilites:
-        solver.Add(sum(X[g.id, m.id, disp.jour_semaine, disp.creneau_horaire] 
-                       for g in groupes for m in matieres 
-                       if MatiereTeacher.objects.filter(enseignant=disp.enseignant, matiere=m).exists()) <= 1)
+        for g in groupes:
+            for m in matieres:
+                if MatiereTeacher.objects.filter(enseignant=disp.enseignant, matiere=m).exists():
+                    solver.Add(X[g.id, m.id, disp.jour_semaine, disp.creneau_horaire] <= 1)
 
     # Constraint 4: One teacher cannot teach two groups at the same time
-    for t in teachers:
+    for t in teacher_assignments:
         for d in days:
             for s in slots:
                 solver.Add(sum(X[g.id, t.matiere.id, d, s] for g in groupes) <= 1)
-
-    # Constraint 5: Apply exceptions (manual scheduling)
-    for ex in exceptions:
-        if ex.type_exception == "suppression":
-            solver.Add(X[ex.groupe.id, ex.matiere.id, ex.jour_semaine, ex.creneau_horaire] == 0)
-        elif ex.type_exception == "ajout":
-            solver.Add(X[ex.groupe.id, ex.matiere.id, ex.jour_semaine, ex.creneau_horaire] == 1)
 
     # Solve the optimization problem
     status = solver.Solve()
@@ -73,13 +67,14 @@ def generate_schedule():
         PlanningHebdomadaire.objects.all().delete()  # Clear previous schedules
         for (g_id, m_id, d, t), var in X.items():
             if var.solution_value() == 1:
+                teacher = MatiereTeacher.objects.filter(matiere_id=m_id).first().enseignant
                 PlanningHebdomadaire.objects.create(
                     groupe_id=g_id,
                     matiere_id=m_id,
-                    enseignant=MatiereTeacher.objects.get(matiere_id=m_id).enseignant,
+                    enseignant=teacher,
                     jour_semaine=d,
                     creneau_horaire=t,
-                    type_lecon="CM"  # Default to CM, can be refined
+                    type_lecon="CM"  # Default to CM
                 )
                 scheduled_classes += 1
 

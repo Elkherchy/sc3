@@ -87,7 +87,7 @@ DATABASES = {
         'NAME': 'sc3' , # Replace with your database name
         'USER': 'elkherchybaba',  # Replace with your MySQL username
         'PASSWORD': 'kh@38405659',  # Replace with your MySQL password
-        'HOST': 'db',  # If your database is on the same machine, use 'localhost'
+        'HOST': '127.0.0.1',  # If your database is on the same machine, use 'localhost'
         'PORT': '5432'  # Default MySQL port
     }
 }
@@ -105,7 +105,7 @@ REST_FRAMEWORK = {
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOWED_ORIGINS = ['http://localhost:3000','https://sc3-gamma.vercel.app','http://157.245.143.208:8000']
 CORS_ALLOW_HEADERS = [
