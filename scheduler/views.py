@@ -5,11 +5,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework import status
 from .models import *
 from .serializers import *
-
-from corsheaders.decorators import cors_exempt
-
 from django.views.decorators.csrf import csrf_exempt
-e
+
 
 
 from django.shortcuts import get_object_or_404
